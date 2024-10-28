@@ -112,17 +112,21 @@
             
         </div>
         
-        
-    <div id="gitalk-container" class="comment link"
-		data-enable="true"
-        data-ae="true"
-        data-ci="Ov23liGdLd1leV0M76l2"
-        data-cs="846f6e95c936a8c5547802ffa93e32cefaec498c"
-        data-r="pinguier"
-        data-o="pinguier"
-        data-a="pinguier"
-        data-d="false"
-    >查看评论</div>
+        <div id="gitalk-container"></div>
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk@latest/dist/gitalk.min.js"></script>
+<script type="text/javascript">
+    const gitalk = new Gitalk({
+        id: "My new Post",
+        admin: '',
+        owner: '',
+        repo: '',
+        clientID: '',
+        clientSecret: '',
+        distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+</script>
 
 
     </div>
