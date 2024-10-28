@@ -10,7 +10,7 @@
 ]]></content>
   </entry>
   <entry>
-    <title>My awesome title</title>
+    <title>单调栈的应用1</title>
     <url>/2024/10/28/%E5%8D%95%E8%B0%83%E6%A0%88%E7%9A%84%E5%BA%94%E7%94%A81/</url>
     <content><![CDATA[<h3 id="单调栈的定义："><a href="#单调栈的定义：" class="headerlink" title="单调栈的定义："></a>单调栈的定义：</h3><blockquote>
 <p>单调栈是栈的一中特殊形式，在栈中的元素必须满足单调性（一定是单调上升或单调下降等等的规律）。</p>
