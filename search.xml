@@ -11,7 +11,7 @@
   </entry>
   <entry>
     <title>My awesome title</title>
-    <url>/2016/10/12/%E5%8D%95%E8%B0%83%E6%A0%88%E7%9A%84%E5%BA%94%E7%94%A81/</url>
+    <url>/2024/10/28/%E5%8D%95%E8%B0%83%E6%A0%88%E7%9A%84%E5%BA%94%E7%94%A81/</url>
     <content><![CDATA[<h3 id="单调栈的定义："><a href="#单调栈的定义：" class="headerlink" title="单调栈的定义："></a>单调栈的定义：</h3><blockquote>
 <p>单调栈是栈的一中特殊形式，在栈中的元素必须满足单调性（一定是单调上升或单调下降等等的规律）。</p>
 </blockquote>
@@ -67,12 +67,11 @@
 <hr>
 ]]></content>
       <categories>
-        <category>分类1</category>
-        <category>分类2</category>
+        <category>java</category>
+        <category>算法</category>
       </categories>
       <tags>
-        <tag>标签1</tag>
-        <tag>标签2</tag>
+        <tag>单调栈</tag>
       </tags>
   </entry>
 </search>
