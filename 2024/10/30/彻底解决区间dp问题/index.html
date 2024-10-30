@@ -1,0 +1,229 @@
+
+<!DOCTYPE html>
+<html lang="zh-Hans" class="loading">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>彻底解决区间dp问题 - pinguier&#39;s blog</title>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="google" content="notranslate" />
+    <meta name="keywords" content="pinguier,"> 
+    <meta name="description" content="垂直活着 水平留恋着,一文解决区间dp问题区间dp的理解
+对于一段区间的元素进行操作，操作必须是连续的，求解，在这段区间上的属性(Min &amp;#x2F; Max),考虑动态规划的考虑方式。
+
+模板
+所有的区间dp问题枚举时,"> 
+    <meta name="author" content="pinguier"> 
+    <link rel="alternative" href="atom.xml" title="pinguier&#39;s blog" type="application/atom+xml"> 
+    <link rel="icon" href="/img/logo.jpg"> 
+    
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+
+    
+    
+    <meta name="twitter:card" content="summary"/>
+    <meta name="twitter:title" content="彻底解决区间dp问题 - pinguier&#39;s blog"/>
+    <meta name="twitter:description" content="垂直活着 水平留恋着,一文解决区间dp问题区间dp的理解
+对于一段区间的元素进行操作，操作必须是连续的，求解，在这段区间上的属性(Min &amp;#x2F; Max),考虑动态规划的考虑方式。
+
+模板
+所有的区间dp问题枚举时,"/>
+    
+    
+    
+    
+    <meta property="og:site_name" content="pinguier&#39;s blog"/>
+    <meta property="og:type" content="object"/>
+    <meta property="og:title" content="彻底解决区间dp问题 - pinguier&#39;s blog"/>
+    <meta property="og:description" content="垂直活着 水平留恋着,一文解决区间dp问题区间dp的理解
+对于一段区间的元素进行操作，操作必须是连续的，求解，在这段区间上的属性(Min &amp;#x2F; Max),考虑动态规划的考虑方式。
+
+模板
+所有的区间dp问题枚举时,"/>
+    
+<link rel="stylesheet" href="/css/diaspora.css">
+
+    <script>window.searchDbPath = "/search.xml";</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap" rel="stylesheet">
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<canvas
+    id="fireworks"
+    style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 32767"
+></canvas>
+<script src="https://cdn.staticfile.org/animejs/3.2.1/anime.min.js"></script>
+<script src="/js/fireworks.min.js"></script>
+
+<body class="loading">
+    <span id="config-title" style="display:none">pinguier&#39;s blog</span>
+    <div id="loader"></div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="iconfont icon-home image-icon" href="javascript:;" data-url="https://pinguier.github.io"></a>
+    <div title="播放/暂停" class="iconfont icon-play"></div>
+    <h3 class="subtitle">彻底解决区间dp问题</h3>
+    <div class="social">
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="iconfont icon-scan" href="javascript:;"></a>
+            </div>
+            <div id="qr"></div>
+        </div>
+    </div>
+    <div class="scrollbar"></div>
+</div>
+
+    <div class="section">
+        <div class="article">
+    <div class='main'>
+        <h1 class="title">彻底解决区间dp问题</h1>
+        <div class="stuff">
+            <span>十月 30, 2024</span>
+            
+  <ul class="post-tags-list" itemprop="keywords"><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" rel="tag">动态规划</a></li><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/%E5%8C%BA%E9%97%B4dp/" rel="tag">区间dp</a></li></ul>
+
+
+        </div>
+        <div class="content markdown">
+            <h2 id="一文解决区间dp问题"><a href="#一文解决区间dp问题" class="headerlink" title="一文解决区间dp问题"></a>一文解决区间dp问题</h2><h3 id="区间dp的理解"><a href="#区间dp的理解" class="headerlink" title="区间dp的理解"></a>区间dp的理解</h3><blockquote>
+<p>对于一段区间的元素进行操作，操作必须是连续的，求解，在这段区间上的属性(<strong>Min</strong> &#x2F; Max),考虑动态规划的考虑方式。</p>
+</blockquote>
+<h3 id="模板"><a href="#模板" class="headerlink" title="模板"></a>模板</h3><blockquote>
+<p>所有的区间dp问题枚举时，<strong>第一维通常是枚举区间长度</strong>，并且一般 len &#x3D; 1 时用来初始化，枚举<strong>从 len &#x3D; 2 开始</strong>；第二维枚举起点 i （右端点 j <strong>自动获得</strong>，j &#x3D; i + len - 1）</p>
+</blockquote>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="type">int</span> len = <span class="number">1</span>; len &lt;= n; len++) &#123;         <span class="comment">// 区间长度</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i + len - <span class="number">1</span> &lt;= n; i++) &#123; <span class="comment">// 枚举起点</span></span><br><span class="line">        <span class="type">int</span> j = i + len - <span class="number">1</span>;                 <span class="comment">// 区间终点</span></span><br><span class="line">        <span class="keyword">if</span> (len == <span class="number">1</span>) &#123;</span><br><span class="line">            dp[i][j] = 初始值</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> k = i; k &lt; j; k++) &#123;        <span class="comment">// 枚举分割点，构造状态转移方程</span></span><br><span class="line">            dp[i][j] = <span class="built_in">min</span>(dp[i][j], dp[i][k] + dp[k + <span class="number">1</span>][j] + w[i][j]);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h3 id="题目整理"><a href="#题目整理" class="headerlink" title="题目整理"></a>题目整理</h3><blockquote>
+<p>1.<a target="_blank" rel="noopener" href="https://www.acwing.com/problem/content/284/">石子合并</a></p>
+</blockquote>
+<hr>
+<h4 id="1-石子合并"><a href="#1-石子合并" class="headerlink" title="1.石子合并"></a>1.石子合并</h4><blockquote>
+<p>采用闫式dp分析法,本题的关键点在于：最后一次合并一定是左边连续的一部分和右边连续的一部分进行合并。<br><img src="https://i-blog.csdnimg.cn/direct/405588cfa4124e0bb19f521f7acc07a5.jpeg#pic_center" alt="在这里插入图片描述"><br><code>f[i][j</code>表示将<code>i</code>到<code>j</code>这一段石子合并成一堆的方案的集合，属性为Min.依据上图的状态计算可以得到最终的答案就是f[1][n].</p>
+</blockquote>
+<ul>
+<li>代码<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Main</span>&#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="type">int</span> <span class="variable">N</span> <span class="operator">=</span> <span class="number">310</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="type">Scanner</span> <span class="variable">sc</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Scanner</span>(System.in);</span><br><span class="line">        <span class="type">int</span>[] s = <span class="keyword">new</span> <span class="title class_">int</span>[N];</span><br><span class="line">        <span class="comment">// f[i][j]表示合并区间[i,j]这些石子的方案 属性为Min</span></span><br><span class="line">        <span class="type">int</span>[][] f = <span class="keyword">new</span> <span class="title class_">int</span>[N][N];</span><br><span class="line"></span><br><span class="line">        <span class="type">int</span> <span class="variable">n</span> <span class="operator">=</span> sc.nextInt();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 初始化前缀和</span></span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>; i &lt;= n; i++) s[i] = sc.nextInt();</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>; i &lt;= n; i++) s[i] += s[i - <span class="number">1</span>];</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 区间dp枚举的是dp的长度</span></span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> <span class="variable">len</span> <span class="operator">=</span> <span class="number">2</span>; len &lt;= n; len++) &#123;</span><br><span class="line">            <span class="comment">// 枚举左端点</span></span><br><span class="line">            <span class="keyword">for</span>(<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>; i + len - <span class="number">1</span> &lt;= n; i++)&#123;</span><br><span class="line">                <span class="type">int</span> <span class="variable">l</span> <span class="operator">=</span> i, r = i + len - <span class="number">1</span>;</span><br><span class="line">                f[l][r] = Integer.MAX_VALUE; <span class="comment">// 因为要求最小值 初始化f[i][j]为最大值</span></span><br><span class="line">                <span class="comment">// 枚举[i,j]区间里最小代价的方案</span></span><br><span class="line">                <span class="keyword">for</span>(<span class="type">int</span> <span class="variable">k</span> <span class="operator">=</span> l; k &lt; r; k++) &#123;</span><br><span class="line">                    f[l][r] = Math.min(f[l][r], f[l][k] + f[k + <span class="number">1</span>][r] + s[r] - s[l - <span class="number">1</span>]);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        System.out.println(f[<span class="number">1</span>][n]);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<hr>
+<p>未完待续</p>
+
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="false">
+                <source type="audio/mpeg" src="">
+            </audio>
+            
+                <ul id="audio-list" style="display:none">
+                    
+                        
+                            <li title="0" data-url="https://lm-sycdn.kuwo.cn/d94dd840f5b418c20e902077d159386c/671f87d3/resource/n1/40/99/1391795569.mp3?bitrate$128&from=vip"></li>
+                        
+                    
+                </ul>
+            
+        </div>
+        
+        <div id="gitalk-container"></div>
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk@latest/dist/gitalk.min.js"></script>
+<script type="text/javascript">
+    const gitalk = new Gitalk({
+        id: "彻底解决区间dp问题",
+        admin: '',
+        owner: '',
+        repo: '',
+        clientID: '',
+        clientSecret: '',
+        distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+</script>
+
+
+    </div>
+    
+        <div class="side">
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E6%96%87%E8%A7%A3%E5%86%B3%E5%8C%BA%E9%97%B4dp%E9%97%AE%E9%A2%98"><span class="toc-number">1.</span> <span class="toc-text">一文解决区间dp问题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8C%BA%E9%97%B4dp%E7%9A%84%E7%90%86%E8%A7%A3"><span class="toc-number">1.1.</span> <span class="toc-text">区间dp的理解</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A8%A1%E6%9D%BF"><span class="toc-number">1.2.</span> <span class="toc-text">模板</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE%E6%95%B4%E7%90%86"><span class="toc-number">1.3.</span> <span class="toc-text">题目整理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E7%9F%B3%E5%AD%90%E5%90%88%E5%B9%B6"><span class="toc-number">1.3.1.</span> <span class="toc-text">1.石子合并</span></a></li></ol></li></ol></li></ol>
+        </div>
+    
+</div>
+
+
+    </div>
+</div>
+</body>
+
+<script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+
+
+<script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/typed.js"></script>
+<script src="/js/diaspora.js"></script>
+
+
+<link rel="stylesheet" href="/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="/photoswipe/default-skin/default-skin.css">
+
+
+<script src="/photoswipe/photoswipe.min.js"></script>
+<script src="/photoswipe/photoswipe-ui-default.min.js"></script>
+
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <!--  Controls are self-explanatory. Order can be changed. -->
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+</html>
