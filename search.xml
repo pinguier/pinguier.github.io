@@ -147,7 +147,10 @@
   <entry>
     <title>Your New Post Title</title>
     <url>/2024/10/31/Your-New-Post-Title/</url>
-    <content><![CDATA[]]></content>
+    <content><![CDATA[<h3 id="这是用来测试我的设置的文章"><a href="#这是用来测试我的设置的文章" class="headerlink" title="这是用来测试我的设置的文章"></a>这是用来测试我的设置的文章</h3><blockquote>
+<p>非常的棒</p>
+</blockquote>
+]]></content>
       <tags>
         <tag>默认标签1</tag>
         <tag>默认标签2</tag>
