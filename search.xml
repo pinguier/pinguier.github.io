@@ -144,4 +144,54 @@
         <tag>区间dp</tag>
       </tags>
   </entry>
+  <entry>
+    <title>一文解决算法中的解码问题</title>
+    <url>/2024/11/02/%E4%B8%80%E6%96%87%E8%A7%A3%E5%86%B3%E7%AE%97%E6%B3%95%E4%B8%AD%E7%9A%84%E8%A7%A3%E7%A0%81%E9%97%AE%E9%A2%98/</url>
+    <content><![CDATA[<h2 id="解码问题-线性dp"><a href="#解码问题-线性dp" class="headerlink" title="解码问题-线性dp"></a>解码问题-线性dp</h2><h3 id="题目汇总"><a href="#题目汇总" class="headerlink" title="题目汇总"></a>题目汇总</h3><blockquote>
+<ol>
+<li><a href="https://leetcode.cn/problems/decode-ways/description/">解码方法I</a></li>
+<li><a href="https://leetcode.cn/problems/decode-ways-ii/description/">解码方法II</a></li>
+</ol>
+</blockquote>
+<hr>
+<h4 id="解码方法I"><a href="#解码方法I" class="headerlink" title="解码方法I"></a>解码方法I</h4><p><img src="/images/acwing/dp/91.jpg"></p>
+<ul>
+<li><p>分析思路：</p>
+<blockquote>
+<p>动态规划，这道题跟跳台阶非常相似。由题意可知，数字<code>[1-26]</code>对应<code>[a-z]</code>。分析时可以考虑对于数字<code>[1-9]</code>，只能是一个数字对应一个字母<code>[a-j]</code>;但是对于数字<code>[11-26]</code>,可能对应两个字母，也可能对应一个字母。例如：12可以对应<code>[ab]</code>和<code>l</code>。因此要分别考虑这两种情况。对于具体做法，考虑使用<strong>动态规划</strong>。<br>  <img src="/images/acwing/dp/leetcode91.jpg" alt="在这里插入图片描述"></p>
+</blockquote>
+</li>
+<li><p>状态表示</p>
+<blockquote>
+<p><code>f[i]</code>表示表示前 <code>i</code>个数字共有多少种解码方式<br>属性为方案数</p>
+</blockquote>
+</li>
+<li><p>状态计算</p>
+<blockquote>
+<p>划分以最后一个解码的字母需要一个还是两个数字来分类。如果需要一个数字，那么满足第<code>i</code>个数字<code>[1-9]</code>即可，此时<code>f[i]</code>就由<code>f[i - 1]</code>转移得到；如果需要两个数字，需要满足这两个数字组成的新数字位于<code>[10-26]</code>，此时<code>f[i]</code>就由<code>f[i - 2]</code>转移得到。具体细节见代码:</p>
+</blockquote>
+</li>
+<li><p>代码</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">numDecodings</span><span class="params">(String s)</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">n</span> <span class="operator">=</span> s.length();</span><br><span class="line">        s = <span class="string">&#x27; &#x27;</span> + s;</span><br><span class="line">        <span class="comment">// f[i]表示s中的前i个字符可以正确解码的方案数</span></span><br><span class="line">        <span class="type">int</span>[] f = <span class="keyword">new</span> <span class="title class_">int</span>[n + <span class="number">1</span>];</span><br><span class="line">        f[<span class="number">0</span>] = <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>; i &lt;= n; i++)&#123;</span><br><span class="line">            <span class="comment">// 最后一位数字代表一个字母</span></span><br><span class="line">            <span class="keyword">if</span>(s.charAt(i) &gt;= <span class="string">&#x27;1&#x27;</span> &amp;&amp; s.charAt(i) &lt;= <span class="string">&#x27;9&#x27;</span>) f[i] += f[i - <span class="number">1</span>];</span><br><span class="line">            <span class="comment">// 最后两个数字对应一个字母</span></span><br><span class="line">            <span class="keyword">if</span>(i &gt; <span class="number">1</span>) &#123;</span><br><span class="line">                <span class="type">int</span> <span class="variable">t</span> <span class="operator">=</span> (s.charAt(i - <span class="number">1</span>) - <span class="string">&#x27;0&#x27;</span>) * <span class="number">10</span> + s.charAt(i) - <span class="string">&#x27;0&#x27;</span>;</span><br><span class="line">                <span class="keyword">if</span>(t &gt;= <span class="number">10</span> &amp;&amp; t &lt;= <span class="number">26</span>) f[i] += f[i - <span class="number">2</span>];</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> f[n];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<hr>
+<h4 id="解码方法II"><a href="#解码方法II" class="headerlink" title="解码方法II"></a>解码方法II</h4><p><img src="/images/acwing/dp/639.jpg"></p>
+<ul>
+<li><p>分析思路</p>
+<blockquote>
+<p>本题属于上题的进阶，添加了<code>*</code>这个限制，对于状态转移方程有了很多细节的考验。如果还是按照上题思路，会多很多的细节判断，尤其是在双字符解码时。<br><img src="/images/acwing/dp/639_1.jpg" alt="在这里插入图片描述"><br>为了减少这些繁琐的逻辑，可以思考：对于最后一个解码后的字母，无非就是<code>[a-z]</code>之间26种情况,因此我们可以多一重循环，枚举最后一个解码的字母，而对于这个字母，也可以分单数字解码和双数字解码进行状态转移，这样最后的逻辑要更加简单一些。<br>注意：因为添加了<code>*</code>的限制，而<code>*</code>可以代表<code>[1-9]</code>中的数，所以要添加当前数字位等于<code>*</code>这种情况的判断,具体细节见代码。</p>
+</blockquote>
+</li>
+<li><p>代码</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">numDecodings</span><span class="params">(String s)</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">n</span> <span class="operator">=</span> s.length();</span><br><span class="line">        s = <span class="string">&#x27; &#x27;</span> + s;</span><br><span class="line">        <span class="type">int</span> <span class="variable">MOD</span> <span class="operator">=</span> (<span class="type">int</span>) (<span class="number">1e9</span> + <span class="number">7</span>);</span><br><span class="line"></span><br><span class="line">        <span class="type">long</span>[] f = <span class="keyword">new</span> <span class="title class_">long</span>[n + <span class="number">1</span>];</span><br><span class="line">        f[<span class="number">0</span>] = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>; i &lt;= n; i++) &#123;</span><br><span class="line">            <span class="comment">// j枚举的是可解码的最后一个字母对应的数字(1-26) 对应a-Z</span></span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">j</span> <span class="operator">=</span> <span class="number">1</span>; j &lt;= <span class="number">26</span>; j++) &#123;</span><br><span class="line">                <span class="type">char</span> <span class="variable">a</span> <span class="operator">=</span> s.charAt(i); <span class="comment">//a表示当前位数字</span></span><br><span class="line"></span><br><span class="line">                <span class="comment">// 单字符解码</span></span><br><span class="line">                <span class="keyword">if</span> (j &lt;= <span class="number">9</span>) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (a == <span class="string">&#x27;*&#x27;</span> || a == (<span class="type">char</span>)(j + <span class="string">&#x27;0&#x27;</span>)) &#123;</span><br><span class="line">                        f[i] = (f[i] + f[i - <span class="number">1</span>]) % MOD;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">// 双字符解码</span></span><br><span class="line">                <span class="keyword">else</span> &#123; </span><br><span class="line">                    <span class="keyword">if</span> (i &gt;= <span class="number">2</span>) &#123;</span><br><span class="line">                    <span class="type">char</span> <span class="variable">b</span> <span class="operator">=</span> s.charAt(i - <span class="number">1</span>); <span class="comment">// 取当前位的前一位数字</span></span><br><span class="line">                    <span class="type">int</span> <span class="variable">y</span> <span class="operator">=</span> j / <span class="number">10</span>, x = j % <span class="number">10</span>;<span class="comment">// 求出来如果是双字符解码，要解码的数字是多少 y是十位 x是个位</span></span><br><span class="line">                    <span class="keyword">if</span> ((b == (<span class="type">char</span>)(y + <span class="string">&#x27;0&#x27;</span>) || (b == <span class="string">&#x27;*&#x27;</span> &amp;&amp; y != <span class="number">0</span>)) &amp;&amp; (a == (<span class="type">char</span>)(x + <span class="string">&#x27;0&#x27;</span>) || (a == <span class="string">&#x27;*&#x27;</span> &amp;&amp; x != <span class="number">0</span>))) &#123;</span><br><span class="line">                        f[i] = (f[i] + f[i - <span class="number">2</span>]) % MOD;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> (<span class="type">int</span>) f[n];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<blockquote>
+<p>另外，在代码中为了防止处理边界，我都是将s前面添加一个空格，这样可以使得枚举的<code>i</code>是<code>[1 - n]</code>的，减少边界条件的处理，还要注意本题中的MOD运算。</p>
+</blockquote>
+]]></content>
+      <tags>
+        <tag>动态规划</tag>
+        <tag>线性dp</tag>
+      </tags>
+  </entry>
 </search>
