@@ -195,10 +195,9 @@
       </tags>
   </entry>
   <entry>
-    <title></title>
+    <title>React学习1</title>
     <url>/2024/11/04/React%E5%AD%A6%E4%B9%A01/</url>
-    <content><![CDATA[<hr>
-<h2 id="title-React学习1tags-web-Reactmp3-music-music2-mp3cover-cover-logo-jpgdate-2024-11-04-15-30-15"><a href="#title-React学习1tags-web-Reactmp3-music-music2-mp3cover-cover-logo-jpgdate-2024-11-04-15-30-15" class="headerlink" title="title: React学习1tags:  - web  - Reactmp3: &#x2F;music&#x2F;music2.mp3cover: &#x2F;cover&#x2F;logo.jpgdate: 2024-11-04 15:30:15"></a>title: React学习1<br>tags:<br>  - web<br>  - React<br>mp3: &#x2F;music&#x2F;music2.mp3<br>cover: &#x2F;cover&#x2F;logo.jpg<br>date: 2024-11-04 15:30:15</h2><h2 id="React"><a href="#React" class="headerlink" title="React"></a>React</h2><h4 id="安装环境"><a href="#安装环境" class="headerlink" title="安装环境"></a>安装环境</h4><blockquote>
+    <content><![CDATA[<h2 id="React"><a href="#React" class="headerlink" title="React"></a>React</h2><h4 id="安装环境"><a href="#安装环境" class="headerlink" title="安装环境"></a>安装环境</h4><blockquote>
 <p>1.安装终端 推荐使用git bash</p>
 <p>2.安装<code>nodejs</code></p>
 <p>3.安装react 这里建议使用<code>npx create-react-app my-app</code></p>
@@ -346,5 +345,9 @@
 
 
 ]]></content>
+      <tags>
+        <tag>web</tag>
+        <tag>React</tag>
+      </tags>
   </entry>
 </search>
