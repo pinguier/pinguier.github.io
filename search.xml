@@ -345,6 +345,9 @@
 
 
 ]]></content>
+      <categories>
+        <category>javaweb</category>
+      </categories>
       <tags>
         <tag>web</tag>
         <tag>React</tag>
