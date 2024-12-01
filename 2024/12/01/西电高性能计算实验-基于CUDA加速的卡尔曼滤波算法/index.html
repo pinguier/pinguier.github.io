@@ -1,0 +1,485 @@
+
+<!DOCTYPE html>
+<html lang="zh-Hans" class="loading">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>西电高性能计算实验-基于CUDA加速的卡尔曼滤波算法 - pinguier&#39;s blog</title>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="google" content="notranslate" />
+    <meta name="keywords" content="pinguier,"> 
+    <meta name="description" content="垂直活着 水平留恋着,实验内容实验环境
+GPU型号：NAVIDIA GeForce  MX350
+运行环境 wsl2-ubuntu22.04
+使用语言：CUDA c++
+CPU型号：i5-10210U 4核, 1.60G,"> 
+    <meta name="author" content="pinguier"> 
+    <link rel="alternative" href="atom.xml" title="pinguier&#39;s blog" type="application/atom+xml"> 
+    <link rel="icon" href="/img/logo.jpg"> 
+    
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+
+    
+    
+    <meta name="twitter:card" content="summary"/>
+    <meta name="twitter:title" content="西电高性能计算实验-基于CUDA加速的卡尔曼滤波算法 - pinguier&#39;s blog"/>
+    <meta name="twitter:description" content="垂直活着 水平留恋着,实验内容实验环境
+GPU型号：NAVIDIA GeForce  MX350
+运行环境 wsl2-ubuntu22.04
+使用语言：CUDA c++
+CPU型号：i5-10210U 4核, 1.60G,"/>
+    
+    
+    
+    
+    <meta property="og:site_name" content="pinguier&#39;s blog"/>
+    <meta property="og:type" content="object"/>
+    <meta property="og:title" content="西电高性能计算实验-基于CUDA加速的卡尔曼滤波算法 - pinguier&#39;s blog"/>
+    <meta property="og:description" content="垂直活着 水平留恋着,实验内容实验环境
+GPU型号：NAVIDIA GeForce  MX350
+运行环境 wsl2-ubuntu22.04
+使用语言：CUDA c++
+CPU型号：i5-10210U 4核, 1.60G,"/>
+    
+<link rel="stylesheet" href="/css/diaspora.css">
+
+    <script>window.searchDbPath = "/search.xml";</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap" rel="stylesheet">
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<canvas
+    id="fireworks"
+    style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 32767"
+></canvas>
+<script src="https://cdn.staticfile.org/animejs/3.2.1/anime.min.js"></script>
+<script src="/js/fireworks.min.js"></script>
+
+<body class="loading">
+    <span id="config-title" style="display:none">pinguier&#39;s blog</span>
+    <div id="loader"></div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="iconfont icon-home image-icon" href="javascript:;" data-url="https://pinguier.github.io"></a>
+    <div title="播放/暂停" class="iconfont icon-play"></div>
+    <h3 class="subtitle">西电高性能计算实验-基于CUDA加速的卡尔曼滤波算法</h3>
+    <div class="social">
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="iconfont icon-scan" href="javascript:;"></a>
+            </div>
+            <div id="qr"></div>
+        </div>
+    </div>
+    <div class="scrollbar"></div>
+</div>
+
+    <div class="section">
+        <div class="article">
+    <div class='main'>
+        <h1 class="title">西电高性能计算实验-基于CUDA加速的卡尔曼滤波算法</h1>
+        <div class="stuff">
+            <span>十二月 01, 2024</span>
+            
+  <ul class="post-tags-list" itemprop="keywords"><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/CUDA%E5%8A%A0%E9%80%9F/" rel="tag">CUDA加速</a></li><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/GPU%E5%BA%94%E7%94%A8/" rel="tag">GPU应用</a></li><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/%E5%8D%A1%E5%B0%94%E6%9B%BC%E6%BB%A4%E6%B3%A2/" rel="tag">卡尔曼滤波</a></li></ul>
+
+
+        </div>
+        <div class="content markdown">
+            <h2 id="实验内容"><a href="#实验内容" class="headerlink" title="实验内容"></a>实验内容</h2><h4 id="实验环境"><a href="#实验环境" class="headerlink" title="实验环境"></a>实验环境</h4><ul>
+<li>GPU型号：NAVIDIA GeForce  MX350</li>
+<li>运行环境 wsl2-ubuntu22.04</li>
+<li>使用语言：CUDA c++</li>
+<li>CPU型号：i5-10210U 4核, 1.60GHz</li>
+</ul>
+<hr>
+<h3 id="算法介绍"><a href="#算法介绍" class="headerlink" title="算法介绍"></a>算法介绍</h3><blockquote>
+<p>卡尔曼滤波算法是一种利用线性系统状态方程，通过系统输入观测数据、上一状态的信息，对系统当前状态进行最优估计的算法。卡尔曼滤波器与大多数滤波器不同之处，在于它是一种纯粹的时域滤波器，它不需要像低通滤波器等频域滤波器那样，需要在频域设计再转换到时域实现。</p>
+</blockquote>
+<blockquote>
+<p>卡尔曼滤波器包括两个主要阶段：预测阶段和更新阶段。在每次迭代中，这两个阶段涉及18次矩阵操作，包括矩阵加法、减法、转置、乘法和逆运算。其中矩阵乘法和逆运算计算量较大。</p>
+</blockquote>
+<h4 id="卡尔曼滤波算法中涉及的矩阵操作如下："><a href="#卡尔曼滤波算法中涉及的矩阵操作如下：" class="headerlink" title="卡尔曼滤波算法中涉及的矩阵操作如下："></a>卡尔曼滤波算法中涉及的矩阵操作如下：</h4><table border="1">
+  <thead>
+    <tr>
+      <th>Matrix Operation</th>
+      <th>Equation</th>
+      <th>Size</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Multiply</td>
+      <td>x<sub>k</sub><sup>-</sup> = F * x<sub>k-1</sub></td>
+      <td>(ns * ns) x (ns * 1)</td>
+    </tr>
+    <tr>
+      <td>Transpose</td>
+      <td>F<sup>T</sup></td>
+      <td>(ns * ns)</td>
+    </tr>
+    <tr>
+      <td>Multiply</td>
+      <td>P<sub>k-1</sub> * F<sup>T</sup></td>
+      <td>(ns * ns) x (ns * ns)</td>
+    </tr>
+    <tr>
+      <td>Multiply</td>
+      <td>F * P<sub>k-1</sub> * F<sup>T</sup></td>
+      <td>(ns * ns) x (ns * ns)</td>
+    </tr>
+    <tr>
+      <td>Add</td>
+      <td>P<sub>k</sub><sup>-</sup> = F * P<sub>k-1</sub> * F<sup>T</sup> + Q</td>
+      <td>(ns * ns) + (ns * ns)</td>
+    </tr>
+    <tr>
+      <td>Transpose</td>
+      <td>H<sup>T</sup></td>
+      <td>(no * ns)</td>
+    </tr>
+    <tr>
+      <td>Multiply</td>
+      <td>P<sub>k</sub><sup>-</sup> * H<sup>T</sup></td>
+      <td>(ns * ns) x (ns * no)</td>
+    </tr>
+    <tr>
+      <td>Multiply</td>
+      <td>H * P<sub>k</sub><sup>-</sup> * H<sup>T</sup></td>
+      <td>(no * ns) x (ns * no)</td>
+    </tr>
+    <tr>
+      <td>Add</td>
+      <td>H * P<sub>k</sub><sup>-</sup> * H<sup>T</sup> + E</td>
+      <td>(no * no) + (no * no)</td>
+    </tr>
+    <tr>
+      <td>Inverse</td>
+      <td>(H * P<sub>k</sub><sup>-</sup> * H<sup>T</sup> + E)<sup>-1</sup></td>
+      <td>(no * no)</td>
+    </tr>
+    <tr>
+      <td>Multiply</td>
+      <td>P<sub>k</sub><sup>-</sup> * H<sup>T</sup> * (H * P<sub>k</sub><sup>-</sup> * H<sup>T</sup> + E)<sup>-1</sup></td>
+      <td>(ns * no) x (no * no)</td>
+    </tr>
+    <tr>
+      <td>Multiply</td>
+      <td>H * x<sub>k</sub></td>
+      <td>(no * ns) x (ns * 1)</td>
+    </tr>
+    <tr>
+      <td>Subtract</td>
+      <td>z<sub>k</sub> - H * x<sub>k</sub><sup>-</sup></td>
+      <td>(no * 1) - (no * 1)</td>
+    </tr>
+    <tr>
+      <td>Multiply</td>
+      <td>K<sub>k</sub> * (z<sub>k</sub> - H * x<sub>k</sub><sup>-</sup>)</td>
+      <td>(ns * no) x (no * 1)</td>
+    </tr>
+    <tr>
+      <td>Add</td>
+      <td>x<sub>k</sub> = x<sub>k</sub><sup>-</sup> + K<sub>k</sub> * (z<sub>k</sub> - H * x<sub>k</sub><sup>-</sup>)</td>
+      <td>(ns * 1) + (ns * 1)</td>
+    </tr>
+    <tr>
+      <td>Multiply</td>
+      <td>K<sub>k</sub> * H</td>
+      <td>(ns * no) x (no * ns)</td>
+    </tr>
+    <tr>
+      <td>Subtract</td>
+      <td>I - K<sub>k</sub> * H</td>
+      <td>(ns * ns) - (ns * ns)</td>
+    </tr>
+    <tr>
+      <td>Multiply</td>
+      <td>(I - K<sub>k</sub> * H) * P<sub>k</sub><sup>-</sup></td>
+      <td>(ns * ns) x (ns * ns)</td>
+    </tr>
+  </tbody>
+</table>
+
+<blockquote>
+<p>GPU（通用计算在图形处理单元上的应用）指的是利用GPU的强大并行计算能力进行传统CPU处理之外的计算任务。在过去，GPU主要用于图形渲染，但随着计算需求的多样化，GPU也逐渐被用于处理各种高并行性的计算任务。通过利用CUDA等技术，GPU能够显著提高计算效率，特别是在大规模数据处理和数值计算方面。</p>
+</blockquote>
+<ul>
+<li><h2 id="CPU和GPU结构图："><a href="#CPU和GPU结构图：" class="headerlink" title="CPU和GPU结构图：  "></a>CPU和GPU结构图：<br>  <img src="/images/highExpeiment/linux/image-7.png" alt="alt text"></h2>  <img src="/images/highExpeiment/linux/image-6.png" alt="alt text"></li>
+</ul>
+<hr>
+<blockquote>
+<p>CUDA（Compute Unified Device Architecture）是由NVIDIA开发的一个并行计算平台和编程模型，允许开发者利用GPU进行通用计算。与传统的CPU架构不同，CUDA架构通过数百或数千个小型处理单元（线程）来并行处理数据，从而加速计算任务。CUDA支持C、C++等编程语言，使得开发者能够方便地在GPU上实现并行算法。</p>
+</blockquote>
+<blockquote>
+<p>我们通过CUDA编程语言探索将矩阵操作并行化的可能性。本次实验采用共享内存优化矩阵乘法，并使用Cholesky分解算法处理矩阵逆运算（因其高效性）。此外，我们将在CPU和GPU上分别实现卡尔曼滤波器，并对两种实现的执行时间进行比较，分析GPU加速效果在不同输入规模下的表现。</p>
+</blockquote>
+<hr>
+<h4 id="卡尔曼状态转移公式："><a href="#卡尔曼状态转移公式：" class="headerlink" title="卡尔曼状态转移公式："></a>卡尔曼状态转移公式：</h4><blockquote>
+<p><img src="/images/highExpeiment/linux/image.png" alt="alt text"></p>
+</blockquote>
+<ul>
+<li>预测阶段：<ul>
+<li><strong>状态预测：</strong></li>
+<li><img src="/images/highExpeiment/linux/image-1.png" alt="alt text"></li>
+<li><strong>状态协方差预测：</strong></li>
+<li><img src="/images/highExpeiment/linux/image-2.png" alt="alt text"></li>
+</ul>
+</li>
+</ul>
+<hr>
+<ul>
+<li><p>更新阶段：</p>
+<ul>
+<li><strong>卡尔曼增益：</strong></li>
+<li><img src="/images/highExpeiment/linux/image-3.png" alt="alt text"></li>
+<li><strong>状态更新：</strong></li>
+<li><img src="/images/highExpeiment/linux/image-4.png" alt="alt text"></li>
+<li><strong>协方差更新：</strong></li>
+<li><img src="/images/highExpeiment/linux/image-5.png" alt="alt text"></li>
+</ul>
+</li>
+</ul>
+<h3 id="卡尔曼滤波器并行计算理论分析"><a href="#卡尔曼滤波器并行计算理论分析" class="headerlink" title="卡尔曼滤波器并行计算理论分析"></a>卡尔曼滤波器并行计算理论分析</h3><ul>
+<li>预测阶段<blockquote>
+<p>在预测阶段，我们根据上一时刻的状态估计和输入控制量计算出当前时刻的状态预测。在CUDA实现中，我们将矩阵乘法和加法操作并行化，每个线程负责计算一个矩阵元素。    </p>
+</blockquote>
+</li>
+<li>更新阶段<blockquote>
+<p>在更新阶段，我们首先计算卡尔曼增益，并根据测量更新状态估计。在GPU实现中，卡尔曼增益的计算和状态更新是通过并行计算多个矩阵元素的方式加速的。矩阵的逆运算通过Cholesky分解进行优化，以减少计算复杂度。</p>
+</blockquote>
+</li>
+</ul>
+<hr>
+<h2 id="进行实验"><a href="#进行实验" class="headerlink" title="进行实验"></a>进行实验</h2><h3 id="算法设计"><a href="#算法设计" class="headerlink" title="算法设计"></a>算法设计</h3><blockquote>
+<p>考虑编写代码，为了实现CUDA加速卡尔曼滤波算法，要设计<code>kalman.cu</code>函数，并使用CUDA并行计算技术加速卡尔曼滤波算法。<br>CUDA 的并行化通过网格和线程块实现。在其中的 ｀PredictKernel｀ 和 ｀UpdateKernel｀函数中 中，利用每个线程负责一个小任务（如计算矩阵的一个元素），通过并行执行实现加速。</p>
+</blockquote>
+<ul>
+<li><p>实现矩阵乘法函数：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">__device__ <span class="type">float</span> <span class="title">ele_multi</span><span class="params">(<span class="type">float</span>* A, <span class="type">float</span>* B, <span class="type">int</span> Awidth, <span class="type">int</span> Bwidth, <span class="type">int</span> tx, <span class="type">int</span> ty)</span> </span>&#123;</span><br><span class="line">    <span class="type">float</span> Pvalue = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> k = <span class="number">0</span>; k &lt; Awidth; ++k) &#123;</span><br><span class="line">        <span class="type">float</span> Melement = A[ty * Awidth + k];</span><br><span class="line">        <span class="type">float</span> Nelement = B[k * Bwidth + tx];</span><br><span class="line">        Pvalue += Melement * Nelement;  <span class="comment">// 按行和列计算矩阵的一个元素</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> Pvalue;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>上述代码中每个线程通过 (tx, ty) 定位到对应矩阵的一个元素位置。使用循环遍历矩阵的中间维度，并将结果累计到 Pvalue</p>
+</blockquote>
+</li>
+<li><p>实现预测值和协方差矩阵的并行计算</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">__global__ <span class="type">void</span> <span class="title">PredictKernel</span><span class="params">(<span class="type">float</span>* predictD, <span class="type">float</span>* covD, <span class="type">float</span>* new_predictD, <span class="type">float</span>* new_covD, <span class="type">int</span> point_num)</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> tx = threadIdx.x;</span><br><span class="line">    <span class="type">int</span> ty = threadIdx.y;</span><br><span class="line">    <span class="type">int</span> bx = blockIdx.x;</span><br><span class="line"></span><br><span class="line">    __shared__ <span class="type">float</span> temp[CovSize];  <span class="comment">// 共享内存用于存储中间结果</span></span><br><span class="line">    <span class="type">float</span> value;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 计算预测值 A * predict</span></span><br><span class="line">    <span class="keyword">if</span> (tx == <span class="number">0</span>) &#123;</span><br><span class="line">        value = <span class="built_in">ele_multi</span>(A, predictD + bx * PredictSize, <span class="number">4</span>, <span class="number">1</span>, tx, ty);</span><br><span class="line">        new_predictD[bx * PredictSize + ty] = value;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 计算协方差 A * cov</span></span><br><span class="line">    value = <span class="built_in">ele_multi</span>(A, covD + bx * CovSize, <span class="number">4</span>, <span class="number">4</span>, tx, ty);</span><br><span class="line">    temp[ty * <span class="number">4</span> + tx] = value;</span><br><span class="line"></span><br><span class="line">    __syncthreads();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 计算最终协方差 (A * cov) * AT + Q</span></span><br><span class="line">    value = <span class="built_in">ele_multi</span>(temp, AT, <span class="number">4</span>, <span class="number">4</span>, tx, ty);</span><br><span class="line">    <span class="keyword">if</span> (bx &lt; point_num) &#123;</span><br><span class="line">        new_covD[bx * CovSize + ty * <span class="number">4</span> + tx] = value + Q[ty * <span class="number">4</span> + tx];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>关键点在于使用 <code>__shared__</code> 缓存中间结果，减少全局内存访问和<code>ele_multi</code> 函数分摊矩阵的计算量到各线程中。</p>
+</blockquote>
+</li>
+<li><p>内存优化</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">__constant__ <span class="type">float</span> A[<span class="number">16</span>] = &#123;<span class="number">1.0</span>, <span class="number">0</span>, Time, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1.0</span>, <span class="number">0</span>, Time, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1.0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1.0</span>&#125;;</span><br><span class="line">__constant__ <span class="type">float</span> Q[<span class="number">16</span>] = &#123;<span class="number">0</span>, <span class="number">0.01</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0.01</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0.002</span>, <span class="number">0.01</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0.01</span>, <span class="number">0.001</span>&#125;;</span><br><span class="line"></span><br><span class="line">__shared__ <span class="type">float</span> temp[CovSize];  <span class="comment">// 定义共享内存</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用共享内存存储协方差中间结果</span></span><br><span class="line">value = <span class="built_in">ele_multi</span>(A, covD + bx * CovSize, <span class="number">4</span>, <span class="number">4</span>, tx, ty);</span><br><span class="line">temp[ty * <span class="number">4</span> + tx] = value;</span><br><span class="line"></span><br><span class="line">__syncthreads();  <span class="comment">// 同步线程，确保共享内存中的数据已被计算</span></span><br><span class="line"><span class="comment">// 计算最终协方差 (A * cov) * AT + Q</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>CUDA 使用 共享内存 和 常量内存 加速矩阵操作，减少频繁的全局内存访问开销。<code>A</code> 和 <code>Q</code> 是常用的状态转移矩阵和噪声协方差矩阵，放在常量内存中，所有线程共享。</p>
+</blockquote>
+</li>
+<li><p>异步优化及流的使用</p>
+<blockquote>
+<p>主函数中的 predict_loop 使用异步操作和 CUDA 流，提高了主机和设备之间的数据传输效率：</p>
+</blockquote>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">predict_loop</span><span class="params">(<span class="type">int</span> iteration_num, <span class="type">float</span>* predict, <span class="type">float</span>* cov, <span class="type">float</span>* new_predict, <span class="type">float</span>* new_cov, <span class="type">int</span> point_num, <span class="type">float</span> <span class="type">delta_t</span>)</span> </span>&#123;</span><br><span class="line">    <span class="type">float</span> *predictD, *covD, *new_predictD, *new_covD;</span><br><span class="line">    cudaStream_t stream; </span><br><span class="line">    <span class="built_in">cudaStreamCreate</span>(&amp;stream);  <span class="comment">// 创建一个 CUDA 流</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 在设备上分配内存</span></span><br><span class="line">    <span class="built_in">cudaMalloc</span>(&amp;predictD, PredictSize * point_num * <span class="built_in">sizeof</span>(<span class="type">float</span>));</span><br><span class="line">    <span class="built_in">cudaMalloc</span>(&amp;covD, CovSize * point_num * <span class="built_in">sizeof</span>(<span class="type">float</span>));</span><br><span class="line">    <span class="built_in">cudaMalloc</span>(&amp;new_predictD, PredictSize * point_num * <span class="built_in">sizeof</span>(<span class="type">float</span>));</span><br><span class="line">    <span class="built_in">cudaMalloc</span>(&amp;new_covD, CovSize * point_num * <span class="built_in">sizeof</span>(<span class="type">float</span>));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 异步将数据拷贝到设备</span></span><br><span class="line">    <span class="built_in">cudaMemcpyAsync</span>(predictD, predict, PredictSize * point_num * <span class="built_in">sizeof</span>(<span class="type">float</span>), cudaMemcpyHostToDevice, stream);</span><br><span class="line">    <span class="built_in">cudaMemcpyAsync</span>(covD, cov, CovSize * point_num * <span class="built_in">sizeof</span>(<span class="type">float</span>), cudaMemcpyHostToDevice, stream);</span><br><span class="line"></span><br><span class="line">    <span class="function">dim3 <span class="title">dimBlock</span><span class="params">(<span class="number">16</span>, <span class="number">16</span>)</span></span>;  <span class="comment">// 定义线程块大小</span></span><br><span class="line">    <span class="function">dim3 <span class="title">dimGrid</span><span class="params">((point_num + dimBlock.x - <span class="number">1</span>) / dimBlock.x, <span class="number">1</span>)</span></span>;  <span class="comment">// 定义网格大小</span></span><br><span class="line"></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 同步流</span></span><br><span class="line">    <span class="built_in">cudaStreamSynchronize</span>(stream);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 拷贝结果回主机</span></span><br><span class="line">    <span class="built_in">cudaMemcpyAsync</span>(new_predict, new_predictD, PredictSize * point_num * <span class="built_in">sizeof</span>(<span class="type">float</span>), cudaMemcpyDeviceToHost, stream);</span><br><span class="line">    <span class="built_in">cudaMemcpyAsync</span>(new_cov, new_covD, CovSize * point_num * <span class="built_in">sizeof</span>(<span class="type">float</span>), cudaMemcpyDeviceToHost, stream);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 清理内存和销毁流</span></span><br><span class="line">    <span class="built_in">cudaStreamDestroy</span>(stream);</span><br><span class="line">    <span class="built_in">cudaFree</span>(predictD);</span><br><span class="line">    <span class="built_in">cudaFree</span>(covD);</span><br><span class="line">    <span class="built_in">cudaFree</span>(new_predictD);</span><br><span class="line">    <span class="built_in">cudaFree</span>(new_covD);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>通过 cudaMemcpyAsync 和流，主机和设备数据传输可与计算并行。dimBlock 和 dimGrid 根据问题规模动态调整，保证每个线程块的 GPU 核心负载均匀。<br>并且这里自己在进行调试实验时dimBlock和dimGrid的参数设置不正确，GPU利用率低，导致计算效率低下。</p>
+</blockquote>
+</li>
+<li><p>与CPU对比</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">cpu_matrix_multiply</span><span class="params">(<span class="type">const</span> <span class="type">float</span>* A, <span class="type">const</span> <span class="type">float</span>* B, <span class="type">float</span>* C, <span class="type">int</span> rowsA, <span class="type">int</span> colsA, <span class="type">int</span> colsB)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; rowsA; i++) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">0</span>; j &lt; colsB; j++) &#123;</span><br><span class="line">            C[i * colsB + j] = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> k = <span class="number">0</span>; k &lt; colsA; k++) &#123;</span><br><span class="line">                C[i * colsB + j] += A[i * colsA + k] * B[k * colsB + j];</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="实验结果"><a href="#实验结果" class="headerlink" title="实验结果"></a>实验结果</h3><blockquote>
+<p>在ubuntu上将代码进行编译，这里采用<code>nvcc -O3 -arch=sm_52 -o</code>的编译方式，使得GPU利用率达到100%。</p>
+</blockquote>
+<p><img src="/images/highExpeiment/linux/image-8.png" alt="alt text"></p>
+<blockquote>
+<p>进行多组实验<br>重新编写test程序，设置多组点数和迭代次数，记录执行时间：分别执行 CPU 和 CUDA 版本的卡尔曼滤波，记录时间及其加速比。</p>
+</blockquote>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 设置多组实验的参数</span></span><br><span class="line">   std::vector&lt;<span class="type">int</span>&gt; iteration_nums = &#123;<span class="number">10000</span>, <span class="number">100000</span>&#125;;  <span class="comment">// 迭代次数</span></span><br><span class="line">   std::vector&lt;<span class="type">int</span>&gt; points_nums = &#123;<span class="number">1000</span>, <span class="number">10000</span>, <span class="number">100000</span>&#125;;  <span class="comment">// 点数</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>运行结果如下：<br><img src="/images/highExpeiment/linux/image-9.png" alt="alt text"></p>
+</blockquote>
+<h3 id="最终实验结果表"><a href="#最终实验结果表" class="headerlink" title="最终实验结果表"></a>最终实验结果表</h3><table>
+<thead>
+<tr>
+<th>迭代次数</th>
+<th>点数</th>
+<th>CUDA 执行时间 (秒)</th>
+<th>CPU 执行时间 (秒)</th>
+<th>加速比</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>10000</td>
+<td>1000</td>
+<td>1.41731</td>
+<td>0.170273</td>
+<td>0.120138</td>
+</tr>
+<tr>
+<td>10000</td>
+<td>10000</td>
+<td>0.0075278</td>
+<td>1.90203</td>
+<td>252.668</td>
+</tr>
+<tr>
+<td>10000</td>
+<td>100000</td>
+<td>0.0045187</td>
+<td>34.3827</td>
+<td>7608.97</td>
+</tr>
+<tr>
+<td>100000</td>
+<td>1000</td>
+<td>0.0345809</td>
+<td>1.04672</td>
+<td>30.2688</td>
+</tr>
+<tr>
+<td>100000</td>
+<td>10000</td>
+<td>0.0403174</td>
+<td>18.6727</td>
+<td>463.143</td>
+</tr>
+<tr>
+<td>100000</td>
+<td>100000</td>
+<td>0.0394984</td>
+<td>341.291</td>
+<td>8640.62</td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="数据分析总结："><a href="#数据分析总结：" class="headerlink" title="数据分析总结："></a>数据分析总结：</h3><blockquote>
+<ul>
+<li>1.GPU 的优势在大数据集和高迭代次数时表现最为明显：当数据集较大（如 10000 和 100000 点），并且迭代次数增加时，GPU 的并行计算优势显著。GPU 的加速比在大数据集上有显著提升，尤其在 100000 点 和 100000 次迭代 时，GPU 展现了 极高的加速比</li>
+<li>2.对于小规模数据集（如 1000 点）：GPU 相对于 CPU 的加速比极低，甚至低于 1，这可能是因为数据量太小，GPU 并行计算的优势未能完全发挥出来。此时，CPU 更适合执行这类小规模计算任务。</li>
+<li>3.在高迭代次数的情况下：即使是较小的数据集，随着迭代次数的增多，GPU 的加速优势也开始显现。尤其在 100000 次迭代 的情况下，GPU 的执行时间大大低于 CPU。</li>
+</ul>
+</blockquote>
+<h3 id="实验总结"><a href="#实验总结" class="headerlink" title="实验总结:"></a>实验总结:</h3><blockquote>
+<p>本文使用 CUDA 实现了并行计算版本的卡尔曼滤波器，并对比了 CPU 和 GPU 的执行时间。实验结果表明：在大数据集和高迭代次数的情况下，GPU 的加速比更加理想。</p>
+</blockquote>
+<hr>
+<h3 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献:"></a>参考文献:</h3><ul>
+<li>[1] An Introduction to the Kalman Filter by Greg Welch and Gary Bishop.</li>
+<li>[2] <a target="_blank" rel="noopener" href="http://en.wikipedia.org/wiki/Kalman_filter">http://en.wikipedia.org/wiki/Kalman_filter</a></li>
+<li>[3] <a target="_blank" rel="noopener" href="http://en.wikipedia.org/wiki/GPGPU">http://en.wikipedia.org/wiki/GPGPU</a></li>
+<li>[4] <a target="_blank" rel="noopener" href="http://www.nvidia.com/object/what-is-gpu-computing.html">http://www.nvidia.com/object/what-is-gpu-computing.html</a></li>
+<li>[5] GPGPU origins and GPU hardware architecture by Stephan Soller</li>
+<li>[6] <a target="_blank" rel="noopener" href="http://en.wikipedia.org/wiki/CUDA">http://en.wikipedia.org/wiki/CUDA</a></li>
+<li>[7] Matrix Multiplication with CUDA-A basic introduction to the CUDA    programming model by Robert Hochberg.</li>
+</ul>
+
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="false">
+                <source type="audio/mpeg" src="/music/music1.mp3">
+            </audio>
+            
+        </div>
+        
+        <div id="gitalk-container"></div>
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk@latest/dist/gitalk.min.js"></script>
+<script type="text/javascript">
+    const gitalk = new Gitalk({
+        id: "西电高性能计算实验-基于CUDA加速的卡尔曼滤波算法",
+        admin: '',
+        owner: '',
+        repo: '',
+        clientID: '',
+        clientSecret: '',
+        distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+</script>
+
+
+    </div>
+    
+        <div class="side">
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E9%AA%8C%E5%86%85%E5%AE%B9"><span class="toc-number">1.</span> <span class="toc-text">实验内容</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%9E%E9%AA%8C%E7%8E%AF%E5%A2%83"><span class="toc-number">1.0.1.</span> <span class="toc-text">实验环境</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AE%97%E6%B3%95%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.1.</span> <span class="toc-text">算法介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8D%A1%E5%B0%94%E6%9B%BC%E6%BB%A4%E6%B3%A2%E7%AE%97%E6%B3%95%E4%B8%AD%E6%B6%89%E5%8F%8A%E7%9A%84%E7%9F%A9%E9%98%B5%E6%93%8D%E4%BD%9C%E5%A6%82%E4%B8%8B%EF%BC%9A"><span class="toc-number">1.1.1.</span> <span class="toc-text">卡尔曼滤波算法中涉及的矩阵操作如下：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CPU%E5%92%8CGPU%E7%BB%93%E6%9E%84%E5%9B%BE%EF%BC%9A"><span class="toc-number">2.</span> <span class="toc-text">CPU和GPU结构图：  </span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8D%A1%E5%B0%94%E6%9B%BC%E7%8A%B6%E6%80%81%E8%BD%AC%E7%A7%BB%E5%85%AC%E5%BC%8F%EF%BC%9A"><span class="toc-number">2.0.1.</span> <span class="toc-text">卡尔曼状态转移公式：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8D%A1%E5%B0%94%E6%9B%BC%E6%BB%A4%E6%B3%A2%E5%99%A8%E5%B9%B6%E8%A1%8C%E8%AE%A1%E7%AE%97%E7%90%86%E8%AE%BA%E5%88%86%E6%9E%90"><span class="toc-number">2.1.</span> <span class="toc-text">卡尔曼滤波器并行计算理论分析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%9B%E8%A1%8C%E5%AE%9E%E9%AA%8C"><span class="toc-number">3.</span> <span class="toc-text">进行实验</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1"><span class="toc-number">3.1.</span> <span class="toc-text">算法设计</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E9%AA%8C%E7%BB%93%E6%9E%9C"><span class="toc-number">3.2.</span> <span class="toc-text">实验结果</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%80%E7%BB%88%E5%AE%9E%E9%AA%8C%E7%BB%93%E6%9E%9C%E8%A1%A8"><span class="toc-number">3.3.</span> <span class="toc-text">最终实验结果表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90%E6%80%BB%E7%BB%93%EF%BC%9A"><span class="toc-number">3.4.</span> <span class="toc-text">数据分析总结：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E9%AA%8C%E6%80%BB%E7%BB%93"><span class="toc-number">3.5.</span> <span class="toc-text">实验总结:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE"><span class="toc-number">3.6.</span> <span class="toc-text">参考文献:</span></a></li></ol></li></ol>
+        </div>
+    
+</div>
+
+
+    </div>
+</div>
+</body>
+
+<script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+
+
+<script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/typed.js"></script>
+<script src="/js/diaspora.js"></script>
+
+
+<link rel="stylesheet" href="/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="/photoswipe/default-skin/default-skin.css">
+
+
+<script src="/photoswipe/photoswipe.min.js"></script>
+<script src="/photoswipe/photoswipe-ui-default.min.js"></script>
+
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <!--  Controls are self-explanatory. Order can be changed. -->
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+</html>
