@@ -613,9 +613,9 @@
 <blockquote>
 <p>GPU（通用计算在图形处理单元上的应用）指的是利用GPU的强大并行计算能力进行传统CPU处理之外的计算任务。在过去，GPU主要用于图形渲染，但随着计算需求的多样化，GPU也逐渐被用于处理各种高并行性的计算任务。通过利用CUDA等技术，GPU能够显著提高计算效率，特别是在大规模数据处理和数值计算方面。</p>
 </blockquote>
-<ul>
-<li><h2 id="CPU和GPU结构图："><a href="#CPU和GPU结构图：" class="headerlink" title="CPU和GPU结构图：  "></a>CPU和GPU结构图：<br>  <img src="/images/highExpeiment/linux/image-7.png" alt="alt text"></h2>  <img src="/images/highExpeiment/linux/image-6.png" alt="alt text"></li>
-</ul>
+<blockquote>
+<p>CPU和GPU结构图：<br>    <img src="/images/highExpeiment/linux/image-7.png" alt="alt text"><br>    —<br>    <img src="/images/highExpeiment/linux/image-6.png" alt="alt text"></p>
+</blockquote>
 <hr>
 <blockquote>
 <p>CUDA（Compute Unified Device Architecture）是由NVIDIA开发的一个并行计算平台和编程模型，允许开发者利用GPU进行通用计算。与传统的CPU架构不同，CUDA架构通过数百或数千个小型处理单元（线程）来并行处理数据，从而加速计算任务。CUDA支持C、C++等编程语言，使得开发者能够方便地在GPU上实现并行算法。</p>
@@ -770,15 +770,6 @@
 <p>本文使用 CUDA 实现了并行计算版本的卡尔曼滤波器，并对比了 CPU 和 GPU 的执行时间。实验结果表明：在大数据集和高迭代次数的情况下，GPU 的加速比更加理想。</p>
 </blockquote>
 <hr>
-<h3 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献:"></a>参考文献:</h3><ul>
-<li>[1] An Introduction to the Kalman Filter by Greg Welch and Gary Bishop.</li>
-<li>[2] <a href="http://en.wikipedia.org/wiki/Kalman_filter">http://en.wikipedia.org/wiki/Kalman_filter</a></li>
-<li>[3] <a href="http://en.wikipedia.org/wiki/GPGPU">http://en.wikipedia.org/wiki/GPGPU</a></li>
-<li>[4] <a href="http://www.nvidia.com/object/what-is-gpu-computing.html">http://www.nvidia.com/object/what-is-gpu-computing.html</a></li>
-<li>[5] GPGPU origins and GPU hardware architecture by Stephan Soller</li>
-<li>[6] <a href="http://en.wikipedia.org/wiki/CUDA">http://en.wikipedia.org/wiki/CUDA</a></li>
-<li>[7] Matrix Multiplication with CUDA-A basic introduction to the CUDA    programming model by Robert Hochberg.</li>
-</ul>
 ]]></content>
       <tags>
         <tag>CUDA加速</tag>
